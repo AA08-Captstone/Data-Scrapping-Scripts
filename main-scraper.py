@@ -1,5 +1,5 @@
 import time
-from pandas import pd
+import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
@@ -11,7 +11,7 @@ driver.get('https://www.linkedin.com')
 time.sleep(2)
 
 #locate and accept cookies
-driver.find_element(By.XPATH, "/html/body/div/main/div[1]/div/section/div/div[2]/button[2]").click()
+# driver.find_element(By.XPATH, "/html/body/div/main/div[1]/div/section/div/div[2]/button[2]").click()
 
 # Reading txt file where we have our user credentials
 with open('user_credentials.txt', 'r',encoding="utf-8") as file:
@@ -19,16 +19,16 @@ with open('user_credentials.txt', 'r',encoding="utf-8") as file:
   user_credentials = [line.rstrip() for line in user_credentials]
   user_name = user_credentials[0] # First line
   password = user_credentials[1] # Second line
-  driver.find_element(By.XPATH, '//[@id="username"]').send_keys(user_name)
-  driver.find_element(By.XPATH, '//[@id="password"]').send_keys(password)
+  driver.find_element(By.ID, 'session_key').send_keys(user_name)
+  driver.find_element(By.ID, 'session_password').send_keys(password)
   time.sleep(1)
 
 #Login button
-driver.find_element(By.XPATH, '//*[@id="organic-div"]/form/div[3]/button').click()
-driver.implicitly_wait(30)
+driver.find_element(By.CLASS_NAME, 'sign-in-form_submit-button').click()
+driver.implicitly_wait(5)
 
 # Access to the Jobs button and click it
-driver.find_element(By.XPATH, '‘//*[@id=”ember19"]’').click()
+driver.find_element(By.CLASS_NAME, 'app-aware-link.global-nav__primary-link ').click()
 time.sleep(3)
 
 #Find search results via link
