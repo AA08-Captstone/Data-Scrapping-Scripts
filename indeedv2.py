@@ -55,12 +55,15 @@ def check_popup(browser):
 def main(job_titles):#,lim):
     browser = get_browser()
 
-    raw_data = []
+    raw_data = pd.DataFrame(columns = ['title', 'comapny', 'location','desc','link'])
+    job_titles_data = pd.read_csv(job_titles)
+
+    """
     with open(job_titles) as f:
         reader = csv.reader(f)
         job_titles_data = list(reader)
-    
-    for title in job_titles_data[0]:
+    """
+    for title in job_titles_data:
         url=search_job_title(browser,title,"Canada")
         i=1
         while True:
@@ -75,40 +78,47 @@ def main(job_titles):#,lim):
                     print("found title")
                 except Exception:
                     print("No title found")
+                    job_title = "No Title"
                 # get job location
                 try:
                     job_location = card.find_element(By.CLASS_NAME,'companyLocation').text
                     print("found location")
                 except Exception:
                     print("No location found")
+                    job_location = "No Location"
                 # get company
                 try:
                     job_company = card.find_element(By.CLASS_NAME,'companyName').text
                     print("found company name")
                 except Exception:
                     print("No company name found")
+                    job_company = "No Company Name"
                 # get job desc
                 try:
                     job_desc = browser.find_element(By.XPATH,'//*[@id="jobsearch-ViewjobPaneWrapper"]/div/div/div/div[1]/div/div/div[1]/div/div[2]/div[2]').text
                     print("found desc")
                 except Exception:
-                    print("No company name found")                
+                    print("No Description found")  
+                    job_desc = "No Description"              
                 # get job date?   
-                row = [job_title,job_company,job_location,job_desc,browser.current_url]
-                raw_data.append(row)
+                raw_data = raw_data.append({'title' : job_title, 'company' : job_company, 'location' : job_location, 'desc': job_desc ,'link': browser.current_url }, 
+                ignore_index = True)
                 i+=1
-                print(f"card {i}")
+                print(f"Scrapping card {i}")
             except Exception:
                 print("No more Jobs?")
                 break
         print(f"Collected {i} jobs, moving on")
         time.sleep(3)
     print("Done Collect, saving now ")
+    raw_data.to_excel("../output/output.xlsx")
+
+    """
     with open('../output/links.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         for link in raw_data:
             writer.writerow([link])
-
+    """
 
 
 if __name__ == "__main__":
