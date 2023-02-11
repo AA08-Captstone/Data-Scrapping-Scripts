@@ -1,5 +1,5 @@
 """
-python3 indeedv2.py --job_titles /Users/danielkhan/CODE/CAPSTONE/input/titles.csv --lim 10
+python3 indeedv2.py --job_titles /Users/danielkhan/CODE/CAPSTONE/input/titles.csv
 """
 
 
@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import click
 import time
+from datetime import datetime
 import pandas as pd
 
 def get_browser():
@@ -55,7 +56,7 @@ def check_popup(browser):
 def main(job_titles):#,lim):
     browser = get_browser()
 
-    raw_data = pd.DataFrame(columns = ['title', 'comapny', 'location','desc','link'])
+    raw_data = pd.DataFrame(columns = ['title', 'company', 'location','desc','link'])
     job_titles_data = pd.read_csv(job_titles)
 
     """
@@ -74,7 +75,7 @@ def main(job_titles):#,lim):
                 check_popup(browser)
                 # get job title
                 try:
-                    job_title = browser.find_element(By.XPATH,'//*[@id="jobsearch-ViewjobPaneWrapper"]/div/div/div/div[1]/div/div/div[1]/div/div[1]/div[1]/div[2]/div[1]/h2').text
+                    job_title = browser.find_element(By.CLASS_NAME,'jobsearch-JobInfoHeader-title-container').text
                     print("found title")
                 except Exception:
                     print("No title found")
@@ -110,8 +111,9 @@ def main(job_titles):#,lim):
                 break
         print(f"Collected {i} jobs, moving on")
         time.sleep(3)
+    now = datetime.now()
     print("Done Collect, saving now ")
-    raw_data.to_excel("../output/output.xlsx")
+    raw_data.to_excel(f"../output/output_{now}.xlsx")
 
     """
     with open('../output/links.csv', 'w', newline='') as file:
